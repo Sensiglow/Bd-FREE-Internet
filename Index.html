@@ -692,5 +692,150 @@
 
 </script>
 
+<style>
+/* Container settings */
+#adContainer {
+  position: fixed;
+  bottom: 20px;
+  right: 15px;
+  display: flex;
+  flex-direction: column-reverse; /* Newest items push visually upwards */
+  align-items: flex-end;
+  z-index: 2147483647; /* Max z-index to stay on top */
+  pointer-events: none; /* Allows clicking through the container area */
+}
+
+/* Individual Ad Box */
+.adBox {
+  pointer-events: auto; /* Re-enable clicks for the box itself */
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border-radius: 50px; /* Fully rounded pill shape */
+  padding: 8px 15px 8px 8px; /* Adjusted padding */
+  margin-top: 10px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.25);
+  cursor: pointer;
+  opacity: 0;
+  transform: translateX(50px) scale(0.9); /* Start slightly small and right */
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Bouncy effect */
+  max-width: 90vw;
+}
+
+.adBox.show {
+  opacity: 1;
+  transform: translateX(0) scale(1);
+}
+
+.adBox img {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.adBox span {
+  margin-left: 10px;
+  font-family: sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: #333;
+  white-space: nowrap;
+}
+
+/* Mobile adjustments */
+@media screen and (max-width: 600px) {
+  #adContainer {
+    right: 10px;
+    bottom: 60px; /* Moved up slightly to avoid mobile nav bars */
+  }
+  .adBox span {
+    font-size: 13px;
+  }
+}
+</style>
+
+<script>
+window.addEventListener('DOMContentLoaded', () => {
+
+    // Your data array
+    const ads = [
+      { time: 5000, img: "https://i.ibb.co/DHsYWb9L/images-1.jpg", text: "Hi baby 😘", link: "https://your-ad-link-1.com" },
+      { time: 10000, img: "https://i.pinimg.com/474x/dd/6a/ba/dd6abae1371d7054a9b4dbd5f602e0ba.jpg", text: "Call me 💋", link: "https://your-ad-link-2.com" },
+      { time: 15000, img: "https://i.ibb.co/0gH8bq0/images-2.jpg", text: "Watch video 🔞", link: "https://your-ad-link-3.com" },
+      { time: 20000, img: "https://i.pinimg.com/474x/dd/6a/ba/dd6abae1371d7054a9b4dbd5f602e0ba.jpg", text: "New Message 💦", link: "https://your-ad-link-4.com" },
+      { time: 25000, img: "https://i.pinimg.com/originals/44/e4/be/44e4be5ddb74bdff571f7d6812f08230.jpg", text: "Hot video 🔥", link: "https://your-ad-link-5.com" }
+    ];
+
+    // Create container
+    const container = document.createElement("div");
+    container.id = "adContainer";
+    document.body.appendChild(container);
+
+    function createAdElement(ad) {
+        const box = document.createElement("div");
+        box.className = "adBox";
+
+        const img = document.createElement("img");
+        img.src = ad.img;
+
+        const text = document.createElement("span");
+        text.innerText = ad.text;
+
+        box.appendChild(img);
+        box.appendChild(text);
+
+        // Main Click Event
+        box.addEventListener("click", () => {
+            window.open(ad.link, "_blank");
+            removeBox(box);
+        });
+
+        container.appendChild(box);
+
+        // Animation In
+        setTimeout(() => box.classList.add("show"), 100);
+
+        // Auto Hide after 8 seconds
+        setTimeout(() => {
+            if(document.body.contains(box)) {
+                removeBox(box);
+            }
+        }, 8000); 
+    }
+
+    function removeBox(box) {
+        box.classList.remove("show");
+        // Wait for CSS transition to finish before removing from DOM
+        setTimeout(() => box.remove(), 400); 
+    }
+
+    // --- REPEAT SYSTEM / LOOP LOGIC ---
+    
+    function startAdSequence() {
+        ads.forEach((ad) => {
+            setTimeout(() => {
+                createAdElement(ad);
+            }, ad.time);
+        });
+    }
+
+    // Calculate total cycle time (Last ad time + 10 seconds buffer)
+    const lastAdTime = ads[ads.length - 1].time;
+    const cycleDuration = lastAdTime + 10000; 
+
+    // Run immediately
+    startAdSequence();
+
+    // Repeat indefinitely
+    setInterval(startAdSequence, cycleDuration);
+
+});
+</script>
+
+    
 </body>
   </html>
